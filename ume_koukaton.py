@@ -279,8 +279,8 @@ class Score:
         """
         ビームを打つときにチャージするサウンドと打つときの音を追加
         """
-        #self.charge_snd = pg.mixer.Sound(f"Sound effects/ビーム胞チャージ.mp3")
-        #self.fire_snd = pg.mixer.Sound(f"Sound effects/ビーム胞1.mp3")
+        #self.charge_snd = pg.mixer.Sound(f"Sound effects/ビーム砲チャージ.mp3")
+        #self.fire_snd = pg.mixer.Sound(f"Sound effects/ビーム砲1.mp3")
 
     #def play_charge(self):
         """【機能追加】チャージ音を再生する"""
