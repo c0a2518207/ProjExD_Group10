@@ -166,6 +166,13 @@ class Egg(pg.sprite.Sprite):
         引数1 bird：卵を放つこうかとん
         引数2 color_name：卵の色
         """
+        POWER_DICT = {
+            "egg": 1,
+            "egg_silver": 2,
+            "egg_gold": 3
+        }
+
+        self.power = POWER_DICT[color_name]
         self.snd = pg.mixer.Sound(f"Sound effects/ショット.mp3") #卵を打つときの効果音
         self.snd.play(maxtime=100)
         super().__init__()
@@ -501,15 +508,21 @@ def main():
                 # ボスが停止状態に入ったら，intervalに応じて羽投下
                 wings.add(Wing())
 
-        for bos in pg.sprite.groupcollide(boss, eggs, False, True).keys():
+        for bos, hit_eggs in pg.sprite.groupcollide(boss, eggs, False, True).items():
             if bos.state == "stop":
-                bos.life -= 1
-                if bos.life <= 0:
-                    exps.add(Explosion(bos, 200))
-                    bos.kill()
+                total_damage = 0
+                for egg in hit_eggs:
+                    total_damage += egg.power
+                bos.life -= total_damage
+            if bos.life <= 0:
+                exps.add(Explosion(bos, 200))
+                bos.kill()
 
-        for emy in pg.sprite.groupcollide(emys, eggs, False, True):
-            emy.hp -= 1
+        for emy, hit_eggs in pg.sprite.groupcollide(emys, eggs, False, True).items():
+            total_damage = 0
+            for egg in hit_eggs:
+                total_damage += egg.power
+            emy.hp -= total_damage
             if emy.hp <= 0:
                 emy.kill()
                 exps.add(Explosion(emy, 100))
@@ -570,15 +583,6 @@ def main():
                 pg.display.update()
                 time.sleep(2)
                 return
-        
-         # こうかとんとアイテムの衝突判定（拾ったときの効果）
-        for item in pg.sprite.spritecollide(bird, items, True):
-            if item.kind == "Score":
-                score.value += 100  # スコア+100ボーナス
-            elif item.kind == "Speed":
-                bird.speed += 2     # こうかとんの移動速度が2アップ
-            elif item.kind == "Life":
-                life.num += 1       # 残機が1回復
 
         bird.update(key_lst, screen)
         eggs.update()
